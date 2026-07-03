@@ -24,10 +24,10 @@
       "prep_start": null
     },
     "2": {
-      "state": "Charging",
+      "state": "Finishing",
       "connector_name": "CCS 2",
-      "start_time": "2026-07-03T21:42:36.065Z",
-      "power_kw": 60,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     },
     "3": {
@@ -56,10 +56,10 @@
   },
   "1125951818": {
     "1": {
-      "state": "Reserved",
+      "state": "Charging",
       "connector_name": "Tipo 2",
-      "start_time": null,
-      "power_kw": null,
+      "start_time": "2026-07-03T22:35:01.768Z",
+      "power_kw": 7.4,
       "prep_start": null
     }
   }
