@@ -216,6 +216,22 @@ def load_last_state():
         return {}
 
 
+def append_total_row(df: pd.DataFrame, sum_columns: list, label_column: str, label: str = "Total") -> pd.DataFrame:
+    """Adiciona uma linha de total ao final do DataFrame, somando as colunas indicadas."""
+
+    if df.empty:
+        return df
+
+    total = {col: "" for col in df.columns}
+    total[label_column] = label
+
+    for col in sum_columns:
+        if col in df.columns:
+            total[col] = df[col].sum()
+
+    return pd.concat([df, pd.DataFrame([total])], ignore_index=True)
+
+
 sessions_df = load_sessions()
 metrics_df = load_metrics()
 attempts_df = load_attempts()
@@ -236,10 +252,52 @@ selected_station = st.sidebar.selectbox(
     format_func=lambda sid: "Todas" if sid == "Todas" else station_labels[sid],
 )
 
+# datas disponíveis nos três arquivos, pra sugerir um intervalo padrão
+# que cubra todo o histórico já registrado
+_available_dates = []
+
+if not sessions_df["start_time"].dropna().empty:
+    _available_dates.append(to_local(sessions_df["start_time"]).dt.date.dropna())
+
+if not metrics_df["date"].dropna().empty:
+    _available_dates.append(metrics_df["date"].dt.date.dropna())
+
+if not attempts_df["prep_start"].dropna().empty:
+    _available_dates.append(to_local(attempts_df["prep_start"]).dt.date.dropna())
+
+if _available_dates:
+    _all_dates = pd.concat(_available_dates)
+    min_date, max_date = _all_dates.min(), _all_dates.max()
+else:
+    min_date = max_date = pd.Timestamp.now(tz=LOCAL_TZ).date()
+
+date_range = st.sidebar.date_input(
+    "Período",
+    value=(min_date, max_date),
+    min_value=min_date,
+    max_value=max_date,
+    format="DD/MM/YYYY",
+)
+
+if isinstance(date_range, tuple) and len(date_range) == 2:
+    start_date, end_date = date_range
+else:
+    # usuário ainda está escolhendo o intervalo (só marcou a 1ª data)
+    single_date = date_range[0] if isinstance(date_range, tuple) else date_range
+    start_date = end_date = single_date
+
 st.sidebar.divider()
 st.sidebar.caption("Preço por kWh")
 for sid in STATION_IDS:
     st.sidebar.write(f"**{get_station_name(sid)}**: R$ {get_station_price(sid):.2f}")
+
+
+def filter_by_period(df: pd.DataFrame, date_col: str, tz_convert: bool = False) -> pd.DataFrame:
+    if df.empty:
+        return df
+    dates = to_local(df[date_col]).dt.date if tz_convert else df[date_col].dt.date
+    return df[(dates >= start_date) & (dates <= end_date)]
+
 
 if selected_station != "Todas":
     sessions_view = sessions_df[sessions_df["station_id"] == selected_station]
@@ -249,6 +307,10 @@ else:
     sessions_view = sessions_df
     metrics_view = metrics_df
     attempts_view = attempts_df
+
+sessions_view = filter_by_period(sessions_view, "start_time", tz_convert=True)
+metrics_view = filter_by_period(metrics_view, "date")
+attempts_view = filter_by_period(attempts_view, "prep_start", tz_convert=True)
 
 
 # ---------------------------------------------------------------
@@ -351,7 +413,13 @@ else:
         "elapsed_minutes", ascending=False
     )
 
-    st.dataframe(ongoing_df, use_container_width=True, hide_index=True)
+    ongoing_display = append_total_row(
+        ongoing_df,
+        sum_columns=["estimated_kwh_so_far", "estimated_revenue_so_far"],
+        label_column="posto",
+    )
+
+    st.dataframe(ongoing_display, use_container_width=True, hide_index=True)
 
     st.caption(
         "⚠️ kWh e receita aqui são estimativas em tempo real (assumindo "
@@ -382,21 +450,25 @@ else:
 
     total_sessions = int(metrics_view["sessions"].sum())
 
+    total_kwh_period = sessions_view["estimated_kwh"].sum() if not sessions_view.empty else 0.0
+
     total_revenue = metrics_view["estimated_revenue_brl"].sum()
 
     total_failed = int(metrics_view["failed_attempts"].sum()) if "failed_attempts" in metrics_view else 0
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     col1.metric("Total de sessões concluídas", total_sessions)
 
-    col2.metric("Receita estimada", f"R$ {total_revenue:,.2f}")
+    col2.metric("Energia total estimada", f"{total_kwh_period:.1f} kWh")
+
+    col3.metric("Receita estimada", f"R$ {total_revenue:,.2f}")
 
     total_attempts = total_sessions + total_failed
 
     conversion = (total_sessions / total_attempts * 100) if total_attempts else None
 
-    col3.metric(
+    col4.metric(
         "Tentativas com falha (Preparing)",
         total_failed,
         delta=f"{conversion:.0f}% de conversão" if conversion is not None else None,
@@ -448,7 +520,13 @@ else:
 
     display_df["posto"] = display_df["station_id"].map(get_station_name)
 
-    st.dataframe(display_df, use_container_width=True, hide_index=True)
+    sessions_display = append_total_row(
+        display_df,
+        sum_columns=["duration_minutes", "estimated_kwh", "estimated_revenue_brl"],
+        label_column="posto",
+    )
+
+    st.dataframe(sessions_display, use_container_width=True, hide_index=True)
 
 
 st.divider()
@@ -483,10 +561,16 @@ else:
 
     st.caption("Ranking de conectores com mais falhas")
 
-    st.dataframe(
+    attempts_ranking_display = append_total_row(
         attempts_by_connector[
             ["posto", "station_id", "connector_id", "connector_name", "falhas"]
         ],
+        sum_columns=["falhas"],
+        label_column="posto",
+    )
+
+    st.dataframe(
+        attempts_ranking_display,
         use_container_width=True,
         hide_index=True,
     )
@@ -501,5 +585,11 @@ else:
     attempts_display["prep_end"] = to_local(attempts_display["prep_end"])
 
     attempts_display["posto"] = attempts_display["station_id"].map(get_station_name)
+
+    attempts_display = append_total_row(
+        attempts_display,
+        sum_columns=["duration_seconds"],
+        label_column="posto",
+    )
 
     st.dataframe(attempts_display, use_container_width=True, hide_index=True)
