@@ -1,0 +1,18 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Variáveis de ambiente (contém configs locais, não sobe pro Git)
+.env
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Logs (não precisa versionar, é só debug local)
+logs/
+
+# IMPORTANTE: a pasta data/ NÃO deve ser ignorada — é ela que o
+# GitHub Actions atualiza e que o dashboard no Streamlit Cloud lê.
+# Se seu .gitignore antigo tinha uma linha "data/" ou "*.csv" ou
+# "*.json", REMOVA essa linha.

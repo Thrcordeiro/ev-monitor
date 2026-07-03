@@ -1,0 +1,66 @@
+{
+  "CPZON22": {
+    "1": {
+      "state": "Available",
+      "connector_name": "CCS 2",
+      "start_time": null,
+      "power_kw": null,
+      "prep_start": null
+    },
+    "2": {
+      "state": "Available",
+      "connector_name": "CCS 2",
+      "start_time": null,
+      "power_kw": null,
+      "prep_start": null
+    }
+  },
+  "CPMADRI001": {
+    "1": {
+      "state": "Available",
+      "connector_name": "Tipo 2",
+      "start_time": null,
+      "power_kw": null,
+      "prep_start": null
+    },
+    "2": {
+      "state": "Available",
+      "connector_name": "CCS 2",
+      "start_time": null,
+      "power_kw": null,
+      "prep_start": null
+    },
+    "3": {
+      "state": "Charging",
+      "connector_name": "CCS 2",
+      "start_time": "2026-07-02T23:42:20.665Z",
+      "power_kw": 60,
+      "prep_start": null
+    }
+  },
+  "CPONENG30": {
+    "1": {
+      "state": "Available",
+      "connector_name": "CCS 2",
+      "start_time": null,
+      "power_kw": null,
+      "prep_start": null
+    },
+    "2": {
+      "state": "Available",
+      "connector_name": "CCS 2",
+      "start_time": null,
+      "power_kw": null,
+      "prep_start": null
+    }
+  },
+  "1125951818": {
+    "1": {
+      "state": "Available",
+      "connector_name": "Tipo 2",
+      "start_time": null,
+      "power_kw": null,
+      "prep_start": null
+    }
+  }
+}
