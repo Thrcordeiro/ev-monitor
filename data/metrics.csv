@@ -1,3 +1,4 @@
 date,station_id,sessions,estimated_revenue_brl,failed_attempts
 2026-07-02,CPZON22,2,53.4,0
 2026-07-02,CPMADRI001,4,307.68,0
+2026-07-03,CPMADRI001,1,126.05,1

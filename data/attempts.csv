@@ -1,0 +1,2 @@
+station_id,connector_id,connector_name,prep_start,prep_end,duration_seconds,outcome
+CPMADRI001,1,Tipo 2,2026-07-03T00:20:57.275755+00:00,2026-07-03T00:26:03.057525+00:00,305.8,failed
