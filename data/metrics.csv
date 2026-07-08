@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 date,station_id,sessions,estimated_revenue_brl,failed_attempts
 2026-07-02,CPZON22,2,53.4,0
 2026-07-02,CPMADRI001,4,307.68,0
@@ -5,3 +6,11 @@ date,station_id,sessions,estimated_revenue_brl,failed_attempts
 2026-07-03,CPZON22,4,255.2,0
 2026-07-03,1125951818,1,31.6,0
 2026-07-03,CPONENG30,1,34.2,0
+=======
+date,station_id,sessions,estimated_revenue_brl,failed_attempts
+2026-07-02,CPZON22,2,53.4,0
+2026-07-02,CPMADRI001,4,307.68,0
+2026-07-03,CPMADRI001,7,646.3,1
+2026-07-03,CPZON22,2,154.8,0
+2026-07-03,1125951818,1,31.68,0
+>>>>>>> Stashed changes

@@ -293,10 +293,29 @@ for sid in STATION_IDS:
 
 
 def filter_by_period(df: pd.DataFrame, date_col: str, tz_convert: bool = False) -> pd.DataFrame:
+    """
+    Filtra um DataFrame pelo intervalo [start_date, end_date] (inclusive
+    nas duas pontas), comparando timestamps completos em vez de datas
+    "soltas" — evita comparações ambíguas entre tipos de data diferentes
+    (naive vs tz-aware, datetime.date vs Timestamp) que podem variar
+    conforme a versão do pandas.
+    """
+
     if df.empty:
         return df
-    dates = to_local(df[date_col]).dt.date if tz_convert else df[date_col].dt.date
-    return df[(dates >= start_date) & (dates <= end_date)]
+
+    series = to_local(df[date_col]) if tz_convert else df[date_col]
+
+    # limites do dia: início às 00:00:00 e fim às 23:59:59.999999999
+    start_ts = pd.Timestamp(start_date)
+    end_ts = pd.Timestamp(end_date) + pd.Timedelta(days=1) - pd.Timedelta(nanoseconds=1)
+
+    tz = getattr(series.dt, "tz", None)
+    if tz is not None:
+        start_ts = start_ts.tz_localize(tz)
+        end_ts = end_ts.tz_localize(tz)
+
+    return df[(series >= start_ts) & (series <= end_ts)]
 
 
 if selected_station != "Todas":
