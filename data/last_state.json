@@ -56,10 +56,10 @@
   },
   "1125951818": {
     "1": {
-      "state": "Charging",
+      "state": "Available",
       "connector_name": "Tipo 2",
-      "start_time": "2026-07-08T17:41:27.921Z",
-      "power_kw": 7.4,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     }
   }
