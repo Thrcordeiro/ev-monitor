@@ -1,11 +1,11 @@
 {
   "CPZON22": {
     "1": {
-      "state": "Preparing",
+      "state": "Charging",
       "connector_name": "CCS 2",
-      "start_time": null,
-      "power_kw": null,
-      "prep_start": "2026-07-09T13:40:47.181917+00:00"
+      "start_time": "2026-07-09T13:41:48.375Z",
+      "power_kw": 60,
+      "prep_start": null
     },
     "2": {
       "state": "Available",
@@ -56,11 +56,11 @@
   },
   "1125951818": {
     "1": {
-      "state": "Available",
+      "state": "Preparing",
       "connector_name": "Tipo 2",
       "start_time": null,
       "power_kw": null,
-      "prep_start": null
+      "prep_start": "2026-07-09T13:45:38.347777+00:00"
     }
   }
 }
