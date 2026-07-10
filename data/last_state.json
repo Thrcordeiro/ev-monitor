@@ -31,10 +31,10 @@
       "prep_start": null
     },
     "3": {
-      "state": "Preparing",
+      "state": "Charging",
       "connector_name": "CCS 2",
-      "start_time": null,
-      "power_kw": null,
+      "start_time": "2026-07-10T18:52:45.711Z",
+      "power_kw": 60,
       "prep_start": null
     }
   },
