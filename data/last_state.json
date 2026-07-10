@@ -8,11 +8,11 @@
       "prep_start": null
     },
     "2": {
-      "state": "Preparing",
+      "state": "Charging",
       "connector_name": "CCS 2",
-      "start_time": null,
-      "power_kw": null,
-      "prep_start": "2026-07-10T19:10:54.813988+00:00"
+      "start_time": "2026-07-10T19:11:06.724Z",
+      "power_kw": 60,
+      "prep_start": null
     }
   },
   "CPMADRI001": {
