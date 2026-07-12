@@ -338,16 +338,18 @@ def filter_by_period(df: pd.DataFrame, date_col: str, tz_convert: bool = False) 
 
     series = to_local(df[date_col]) if tz_convert else df[date_col]
 
-    # limites do dia: início às 00:00:00 e fim às 23:59:59.999999999
+    # limites do dia: início às 00:00:00 (inclusivo) e início do dia
+    # seguinte (exclusivo) — evita aritmética de nanossegundos, que
+    # dispara DeprecationWarning do NumPy em versões recentes
     start_ts = pd.Timestamp(start_date)
-    end_ts = pd.Timestamp(end_date) + pd.Timedelta(days=1) - pd.Timedelta(nanoseconds=1)
+    end_ts = pd.Timestamp(end_date) + pd.Timedelta(days=1)
 
     tz = getattr(series.dt, "tz", None)
     if tz is not None:
         start_ts = start_ts.tz_localize(tz)
         end_ts = end_ts.tz_localize(tz)
 
-    return df[(series >= start_ts) & (series <= end_ts)]
+    return df[(series >= start_ts) & (series < end_ts)]
 
 
 if selected_station != "Todas":
