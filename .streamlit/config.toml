@@ -1,2 +1,13 @@
 [theme]
 base = "light"
+
+# Desliga o file watcher (watchdog/inotify) do Streamlit.
+#
+# No Community Cloud o limite de inotify watches do host compartilhado
+# pode estourar — especialmente porque o scheduler comita dados a cada
+# poucos minutos e o container reescreve os JSONL/CSVs em cada pull —
+# derrubando o servidor com Segmentation fault. O watcher só serve para
+# hot-reload durante desenvolvimento; em produção o próprio Cloud puxa
+# e aplica o código novo.
+[server]
+fileWatcherType = "none"
