@@ -27,6 +27,18 @@ from utils import (
 )
 
 
+def _null_if_empty(value):
+
+    """
+    A API do Tupi às vezes retorna string vazia em vez de null
+    quando um campo não tem valor. Normaliza pra None de verdade,
+    senão as colunas ficam com tipo misto (int + '') e quebram a
+    serialização Arrow no dashboard.
+    """
+
+    return None if value == "" else value
+
+
 class Collector:
 
     def __init__(self, station_id: str):
@@ -69,12 +81,12 @@ class Collector:
 
                 connectors.append(
                     {
-                        "id": plug.get("connectorID"),
-                        "name": plug.get("name"),
-                        "power": plug.get("power"),
-                        "state": plug.get("stateName"),
-                        "started_user": plug.get("startedUserID"),
-                        "started_on": plug.get("startChargingOn")
+                        "id": _null_if_empty(plug.get("connectorID")),
+                        "name": _null_if_empty(plug.get("name")),
+                        "power": _null_if_empty(plug.get("power")),
+                        "state": _null_if_empty(plug.get("stateName")),
+                        "started_user": _null_if_empty(plug.get("startedUserID")),
+                        "started_on": _null_if_empty(plug.get("startChargingOn"))
                     }
                 )
 

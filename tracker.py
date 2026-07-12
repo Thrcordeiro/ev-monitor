@@ -103,7 +103,16 @@ def process_snapshot(payload: dict):
 
     for connector in payload["connectors"]:
 
-        conn_id = str(connector["id"])
+        # id ausente/vazio fica como None de verdade — str(None) viraria
+        # a string "None" e '' viraria tipo misto nos CSVs, quebrando
+        # a serialização Arrow no dashboard.
+        raw_conn_id = connector.get("id")
+
+        if raw_conn_id == "":
+            raw_conn_id = None
+
+        # chave usada no last_state.json (JSON exige chave string)
+        conn_id = str(raw_conn_id) if raw_conn_id is not None else "unknown"
 
         current_state = connector["state"]
 
@@ -180,9 +189,9 @@ def process_snapshot(payload: dict):
 
             row = {
                 "station_id": station_id,
-                "connector_id": conn_id,
+                "connector_id": raw_conn_id,
                 "connector_name": connector.get("name"),
-                "start_time": prev.get("start_time"),
+                "start_time": prev.get("start_time") or None,
                 "end_time": end_dt.isoformat(),
                 "duration_minutes": duration_minutes,
                 "power_kw": power_kw,
@@ -263,9 +272,9 @@ def process_snapshot(payload: dict):
 
             row = {
                 "station_id": station_id,
-                "connector_id": conn_id,
+                "connector_id": raw_conn_id,
                 "connector_name": connector.get("name"),
-                "prep_start": prev.get("prep_start"),
+                "prep_start": prev.get("prep_start") or None,
                 "prep_end": end_dt.isoformat(),
                 "duration_seconds": duration_seconds,
                 "outcome": "failed",

@@ -222,7 +222,9 @@ def append_total_row(df: pd.DataFrame, sum_columns: list, label_column: str, lab
     if df.empty:
         return df
 
-    total = {col: "" for col in df.columns}
+    # None (e não "") — string vazia em coluna numérica/datetime cria
+    # tipo misto e quebra a serialização Arrow do st.dataframe()
+    total = {col: None for col in df.columns}
     total[label_column] = label
 
     for col in sum_columns:
@@ -230,6 +232,36 @@ def append_total_row(df: pd.DataFrame, sum_columns: list, label_column: str, lab
             total[col] = df[col].sum()
 
     return pd.concat([df, pd.DataFrame([total])], ignore_index=True)
+
+
+def clean_for_arrow(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Sanitiza um DataFrame antes de exibi-lo com st.dataframe()/st.table():
+
+    - troca strings vazias (e "None"/"nan" literais) por nulo real;
+    - força connector_id para inteiro nullable (Int64);
+    - força colunas de tempo para datetime nullable.
+
+    Evita colunas de tipo misto (int + '' etc.), que quebram a
+    serialização Arrow usada pelo Streamlit.
+    """
+
+    df = df.copy()
+
+    obj_cols = df.select_dtypes(include="object").columns
+    if len(obj_cols):
+        df[obj_cols] = df[obj_cols].replace(["", "None", "nan"], pd.NA)
+
+    if "connector_id" in df.columns:
+        df["connector_id"] = pd.to_numeric(
+            df["connector_id"], errors="coerce"
+        ).astype("Int64")
+
+    for col in ("start_time", "end_time", "prep_start", "prep_end"):
+        if col in df.columns and not pd.api.types.is_datetime64_any_dtype(df[col]):
+            df[col] = pd.to_datetime(df[col], errors="coerce")
+
+    return df
 
 
 sessions_df = load_sessions()
@@ -438,7 +470,7 @@ else:
         label_column="posto",
     )
 
-    st.dataframe(ongoing_display, use_container_width=True, hide_index=True)
+    st.dataframe(clean_for_arrow(ongoing_display), use_container_width=True, hide_index=True)
 
     st.caption(
         "⚠️ kWh e receita aqui são estimativas em tempo real (assumindo "
@@ -545,7 +577,7 @@ else:
         label_column="posto",
     )
 
-    st.dataframe(sessions_display, use_container_width=True, hide_index=True)
+    st.dataframe(clean_for_arrow(sessions_display), use_container_width=True, hide_index=True)
 
 
 st.divider()
@@ -589,7 +621,7 @@ else:
     )
 
     st.dataframe(
-        attempts_ranking_display,
+        clean_for_arrow(attempts_ranking_display),
         use_container_width=True,
         hide_index=True,
     )
@@ -611,4 +643,4 @@ else:
         label_column="posto",
     )
 
-    st.dataframe(attempts_display, use_container_width=True, hide_index=True)
+    st.dataframe(clean_for_arrow(attempts_display), use_container_width=True, hide_index=True)
