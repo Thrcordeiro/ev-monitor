@@ -8,10 +8,10 @@
       "prep_start": null
     },
     "2": {
-      "state": "Available",
+      "state": "Charging",
       "connector_name": "CCS 2",
-      "start_time": null,
-      "power_kw": null,
+      "start_time": "2026-07-13T19:23:43.079Z",
+      "power_kw": 60,
       "prep_start": null
     }
   },
@@ -31,10 +31,10 @@
       "prep_start": null
     },
     "3": {
-      "state": "Charging",
+      "state": "Available",
       "connector_name": "CCS 2",
-      "start_time": "2026-07-13T18:55:02.530Z",
-      "power_kw": 60,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     }
   },
@@ -56,10 +56,10 @@
   },
   "1125951818": {
     "1": {
-      "state": "Charging",
+      "state": "SuspendedEV",
       "connector_name": "Tipo 2",
-      "start_time": "2026-07-13T16:13:29.281Z",
-      "power_kw": 7.4,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     }
   }
