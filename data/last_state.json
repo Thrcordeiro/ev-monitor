@@ -24,10 +24,10 @@
       "prep_start": null
     },
     "2": {
-      "state": "Charging",
+      "state": "Available",
       "connector_name": "CCS 2",
-      "start_time": "2026-07-14T22:01:40.105Z",
-      "power_kw": 60,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     },
     "3": {
@@ -40,10 +40,10 @@
   },
   "CPONENG30": {
     "1": {
-      "state": "Charging",
+      "state": "Available",
       "connector_name": "CCS 2",
-      "start_time": "2026-07-14T22:45:53.584Z",
-      "power_kw": 60,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     },
     "2": {
