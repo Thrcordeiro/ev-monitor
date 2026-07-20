@@ -8,30 +8,30 @@
       "prep_start": null
     },
     "2": {
-      "state": "Charging",
+      "state": "Finishing",
       "connector_name": "CCS 2",
-      "start_time": "2026-07-20T21:00:14.936Z",
-      "power_kw": 60,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     }
   },
   "CPMADRI001": {
     "1": {
-      "state": "Unavailable",
+      "state": "Available",
       "connector_name": "Tipo 2",
       "start_time": null,
       "power_kw": null,
       "prep_start": null
     },
     "2": {
-      "state": "Unavailable",
+      "state": "Charging",
       "connector_name": "CCS 2",
-      "start_time": null,
-      "power_kw": null,
+      "start_time": "2026-07-20T21:45:11.800Z",
+      "power_kw": 60,
       "prep_start": null
     },
     "3": {
-      "state": "Unavailable",
+      "state": "Available",
       "connector_name": "CCS 2",
       "start_time": null,
       "power_kw": null,
