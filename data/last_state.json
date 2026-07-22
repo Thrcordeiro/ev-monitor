@@ -17,10 +17,10 @@
   },
   "CPMADRI001": {
     "1": {
-      "state": "Charging",
+      "state": "Finishing",
       "connector_name": "Tipo 2",
-      "start_time": "2026-07-22T00:33:10.650Z",
-      "power_kw": 11,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     },
     "2": {
@@ -56,10 +56,10 @@
   },
   "1125951818": {
     "1": {
-      "state": "Charging",
+      "state": "Available",
       "connector_name": "Tipo 2",
-      "start_time": "2026-07-21T23:18:15.669Z",
-      "power_kw": 7.4,
+      "start_time": null,
+      "power_kw": null,
       "prep_start": null
     }
   }
