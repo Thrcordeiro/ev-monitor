@@ -11,16 +11,22 @@ on:
 permissions:
   contents: write
 
+# Garante que duas execuções não comitem ao mesmo tempo: a nova espera
+# na fila em vez de cancelar a anterior (não queremos perder coletas).
+concurrency:
+  group: collector
+  cancel-in-progress: false
+
 jobs:
   collect:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configurar Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -32,8 +38,34 @@ jobs:
 
       - name: Salvar dados atualizados no repositório
         run: |
+          set -euo pipefail
+
           git config user.name "ev-monitor-bot"
           git config user.email "actions@github.com"
+          # Evita que arquivos não rastreados/modificados travem o rebase.
+          git config rebase.autoStash true
+
           git add data/
-          git diff --staged --quiet || git commit -m "chore: atualiza dados de coleta [skip ci]"
-          git push
+
+          if git diff --staged --quiet; then
+            echo "Nenhuma mudança nos dados; nada a comitar."
+            exit 0
+          fi
+
+          git commit -m "chore: atualiza dados de coleta [skip ci]"
+
+          # O main remoto pode ter avançado (outra execução do próprio
+          # workflow) entre o checkout e o push. Tenta algumas vezes,
+          # rebaseando em cima do remoto entre as tentativas.
+          for tentativa in 1 2 3 4 5; do
+            git pull --rebase origin main
+            if git push origin HEAD:main; then
+              echo "Push concluído na tentativa $tentativa."
+              exit 0
+            fi
+            echo "Push rejeitado (tentativa $tentativa). Tentando novamente..."
+            sleep $((tentativa * 5))
+          done
+
+          echo "Não foi possível dar push após 5 tentativas." >&2
+          exit 1
