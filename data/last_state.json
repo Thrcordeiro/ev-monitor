@@ -1,11 +1,11 @@
 {
   "CPZON22": {
     "1": {
-      "state": "Available",
+      "state": "Preparing",
       "connector_name": "CCS 2",
       "start_time": null,
       "power_kw": null,
-      "prep_start": null
+      "prep_start": "2026-07-27T00:55:38.873517+00:00"
     },
     "2": {
       "state": "Available",
@@ -40,7 +40,7 @@
   },
   "CPONENG30": {
     "1": {
-      "state": "Available",
+      "state": "Finishing",
       "connector_name": "CCS 2",
       "start_time": null,
       "power_kw": null,
